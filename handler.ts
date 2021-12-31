@@ -30,14 +30,13 @@ registerResolver('Paintboard', 'paint(x: Int!, y: Int!, color: Int!)', 'String',
     if (await coll.findOne({ _id: timeFilter, uid: ctx.user._id })) return '冷却时间未到';
     await coll.updateMany({ x: args.x, y: args.y }, { $set: { effective: false } });
     await coll.insertOne({ ...args, effective: true, uid: ctx.user._id });
-    bus.emit('paintboard/paint', args);
+    bus.broadcast('paintboard/paint', args);
 });
 
 class ConnHandler extends ConnectionHandler {
     listener: () => boolean;
 
     prepare() {
-        console.log('register')
         this.listener = bus.on('paintboard/paint', (args) => this.send(args));
     }
 
