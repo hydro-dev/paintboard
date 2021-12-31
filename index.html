@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1 user-scalable=no">
+  <title>冬日绘版</title>
+</head>
+
+<body>
+  <header class="am-topbar am-topbar-fixed-top">
+    <div class="am-container">
+      <h1 class="am-topbar-brand">
+        <a href="#">冬日绘版</a>
+      </h1>
+    </div>
+  </header>
+  <div class="about">
+    <div class="am-g am-container">
+      <div class="am-u-lg-12">
+        <div class="am-g">
+          <div class="am-u-lg-11" id="canvas-box">
+            <canvas width=5000 height=3000 id='mycanvas'>
+            </canvas>
+          </div>
+          <div class="am-u-lg-7" id='palette'>Loading...</div>
+          <div class="am-u-lg-5" id='zoom-tool'>
+            <button type="button" class="am-btn am-btn-primary am-radius" zoom=1>全部显示</button>
+            <button type="button" class="am-btn am-btn-secondary am-radius" zoom=5>放大5x</button>
+            <button type="button" class="am-btn am-btn-success am-radius" zoom=10>放大10x</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="./src/main.ts"></script>
+</body>
+
+</html>

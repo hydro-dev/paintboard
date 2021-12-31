@@ -1,0 +1,52 @@
+.about {
+  background: #fff;
+  padding: 40px 0;
+  color: #7f8c8d;
+}
+
+.about-color {
+  color: #34495e;
+}
+
+.about-title {
+  font-size: 180%;
+  padding: 30px 0 50px 0;
+  text-align: center;
+}
+
+.footer p {
+  color: #7f8c8d;
+  margin: 0;
+  padding: 15px 0;
+  text-align: center;
+  background: #2d3e50;
+}
+
+.paleitem {
+  margin: 5px;
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  background: #66ccff;
+  display: inline-block;
+  cursor: pointer;
+}
+
+#palette {
+  padding: 10px;
+  background: #7f7f7f;
+  margin: 10px;
+  width: 500px;
+  color: #fff;
+}
+
+.selected {
+  border: #DAA520 3px solid;
+}
+
+#canvas-box {
+  width: 1000px;
+  height: 630px;
+  padding: 0;
+  overflow: auto;
+}
