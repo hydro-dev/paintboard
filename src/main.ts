@@ -3,6 +3,7 @@ import '@eirslett/jquery-ui-esm/esm/widgets/draggable';
 import 'amazeui/dist/css/amazeui.min.css';
 import './index.css';
 
+const delay = 8;
 const H = 600;
 const W = 1000;
 let nowcolor = 0;
@@ -73,28 +74,44 @@ $('#mycanvas').bind("mousewheel", function (event) {
     }
     return false;
 });
+let last = 0;
 $('#mycanvas').bind("click", function (event) {
     var x = Math.floor(event.offsetX / scale);
     var y = Math.floor(event.offsetY / scale);
+    if (last && Date.now() - delay * 1000 >= last) return alert('冷却时间未到');
+    last = Date.now();
+    update(x, y, nowcolor);
     $.post("/api",
         { query: `{paintboard{paint(x:${x},y:${y},color:${nowcolor})}}` },
         (resp) => { if (resp.data.paintboard.paint) alert(resp.data.paintboard.paint); }
     );
+    for (let i = 0; i <= delay; i++) {
+        setTimeout(() => {
+            if (i === delay) $('#info').text('');
+            $('#info').text('还剩 ' + (delay - i) + ' 秒');
+        }, i * 1000);
+    }
 })
 $.post("/api", { query: '{paintboard{board}}' }, function (resp) {
     for (const pixels of resp.data.paintboard.board) {
         update(pixels[0], pixels[1], pixels[2]);
     }
 });
-let ws: WebSocket;
-try {
-    ws = new WebSocket(location.protocol.replace('http', 'ws') + '//' + location.host + '/paintboard/conn/websocket');
+function connect() {
+    const ws = new WebSocket(location.protocol.replace('http', 'ws') + '//' + location.host + '/paintboard/conn/websocket');
     ws.onmessage = function (event) {
         const data = JSON.parse(event.data);
+        if (typeof data.x === 'undefined') return;
         update(data.x, data.y, data.color);
     };
-    ws.onopen = () => ws.send(document.cookie);
-} catch (e) {
-    console.log(e);
-    alert("无法连接服务器");
+    ws.onopen = () => {
+        ws.send(document.cookie);
+        $('#info').text('');
+    }
+    ws.onclose = (e) => {
+        if (e.reason.startsWith('Privilege')) $('#info').text(e.reason);
+        connect();
+    }
 }
+
+connect();
