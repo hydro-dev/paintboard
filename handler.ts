@@ -27,11 +27,19 @@ registerResolver('Paintboard', 'board', '[[Int]]', async () => {
 registerResolver('Paintboard', 'paint(x: Int!, y: Int!, color: Int!)', 'String', async (args, ctx) => {
     if (!ctx.user.hasPriv(PRIV.PRIV_USER_PROFILE)) return '请先登录';
     const timeFilter = { $gt: Time.getObjectID(new Date(Date.now() - 8 * 1000), true) };
+    if (args.x <= 0 || args.y <= 0 || args.x > 1000 || args.y > 600) return '坐标超出范围';
     if (await coll.findOne({ _id: timeFilter, uid: ctx.user._id })) return '冷却时间未到';
     await coll.updateMany({ x: args.x, y: args.y }, { $set: { effective: false } });
     await coll.insertOne({ ...args, effective: true, uid: ctx.user._id });
     bus.broadcast('paintboard/paint', args);
 });
+
+bus.on('app/started', () => {
+    db.ensureIndexes(coll, [
+        { key: { x: 1, y: 1 }, name: 'pos' },
+        { key: { uid: 1 }, name: 'user' },
+    ])
+})
 
 class ConnHandler extends ConnectionHandler {
     listener: () => boolean;
@@ -53,5 +61,5 @@ class PaintboardHandler extends Handler {
 
 global.Hydro.handler.paintboard = () => {
     Connection('paintboard_conn', '/paintboard/conn', ConnHandler);
-    Route('paintboard', '/paintboard', PaintboardHandler, PRIV.PRIV_USER_PROFILE);
+    Route('paintboard', '/paintboard', PaintboardHandler);
 }

@@ -92,6 +92,9 @@ $('#mycanvas').bind("click", function (event) {
         }, i * 1000);
     }
 })
+$('#login').on('click', () => {
+    window.location.href = '/login?redirect=%252Fpaintboard';
+})
 $.post("/api", { query: '{paintboard{board}}' }, function (resp) {
     for (const pixels of resp.data.paintboard.board) {
         update(pixels[0], pixels[1], pixels[2]);

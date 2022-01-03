@@ -16,6 +16,13 @@
       <h1 class="am-topbar-brand">
         <a href="#">冬日绘版</a>
       </h1>
+      <div class="am-topbar-right">
+        {% if handler.user.hasPriv(PRIV.PRIV_USER_PROFILE) %}
+          <button class="am-btn am-btn-primary am-topbar-btn am-btn-sm">{{ handler.user.uname }}</button>
+        {% else %}
+          <button class="am-btn am-btn-primary am-topbar-btn am-btn-sm" id="login">登录</button>
+        {% endif %}
+      </div>
     </div>
   </header>
   <div class="about">
