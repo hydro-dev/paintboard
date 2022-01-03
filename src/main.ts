@@ -78,7 +78,7 @@ let last = 0;
 $('#mycanvas').bind("click", function (event) {
     var x = Math.floor(event.offsetX / scale);
     var y = Math.floor(event.offsetY / scale);
-    if (last && Date.now() - delay * 1000 >= last) return alert('冷却时间未到');
+    if (last && Date.now() - delay * 1000 <= last) return alert('冷却时间未到');
     last = Date.now();
     update(x, y, nowcolor);
     $.post("/api",
