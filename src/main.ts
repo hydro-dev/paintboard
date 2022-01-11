@@ -18,8 +18,8 @@ for (var i = 0; i < H; i++) {
         ctx.fillRect(j * scale, i * scale, scale, scale);
     }
 }
-function update(x: number, y: number, color: number) {
-    console.log('update', x, y, color);
+function update(x: number, y: number, color: number, log = true) {
+    if (log) console.log('update', x, y, color);
     if (dragged) {
         dragged = 0;
         return;
@@ -96,8 +96,13 @@ $('#login').on('click', () => {
     window.location.href = '/login?redirect=%252Fpaintboard';
 })
 $.post("/api", { query: '{paintboard{board}}' }, function (resp) {
-    for (const pixels of resp.data.paintboard.board) {
-        update(pixels[0], pixels[1], pixels[2]);
+    const b = resp.data.paintboard.board;
+    for (let y = 1; y <= b.length; y++) {
+        for (let x = 1; x <= b[y - 1].length; x++) {
+            if (b[y - 1][x - 1] !== '.') {
+                update(x, y, parseInt(b[y - 1][x - 1], 35), false);
+            }
+        }
     }
 });
 function connect() {
