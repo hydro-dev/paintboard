@@ -30,7 +30,7 @@ registerResolver('Query', 'paintboard', 'Paintboard!', () => ({}));
 registerResolver('Paintboard', 'board', '[String]', () => currentBoard);
 registerResolver('Paintboard', 'paint(x: Int!, y: Int!, color: Int!)', 'String', async (args, ctx) => {
     if (!ctx.user.hasPriv(PRIV.PRIV_USER_PROFILE)) return '请先登录';
-    if (args.x <= 0 || args.y <= 0 || args.x > 1000 || args.y > 600) return '坐标超出范围';
+    if (args.x < 0 || args.y < 0 || args.x >= 1000 || args.y >= 600) return '坐标超出范围';
     if (args.color > 32) return '无效颜色';
     const timeFilter = { $gt: Time.getObjectID(new Date(Date.now() - 8 * 1000), true) };
     if (await coll.findOne({ _id: timeFilter, uid: ctx.user._id })) return '冷却时间未到';
@@ -40,7 +40,7 @@ registerResolver('Paintboard', 'paint(x: Int!, y: Int!, color: Int!)', 'String',
 });
 
 function update(x: number, y: number, color: number) {
-    currentBoard[y - 1] = currentBoard[y - 1].substr(0, x - 1) + dict[color] + currentBoard[y - 1].substr(x);
+    currentBoard[y] = currentBoard[y].substr(0, x) + dict[color] + currentBoard[y].substr(x);
 }
 bus.on('paintboard/paint', (args) => update(args.x, args.y, args.color));
 bus.on('app/started', () => Promise.all([

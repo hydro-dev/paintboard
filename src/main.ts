@@ -97,10 +97,10 @@ $('#login').on('click', () => {
 })
 $.post("/api", { query: '{paintboard{board}}' }, function (resp) {
     const b = resp.data.paintboard.board;
-    for (let y = 1; y <= b.length; y++) {
-        for (let x = 1; x <= b[y - 1].length; x++) {
-            if (b[y - 1][x - 1] !== '.') {
-                update(x, y, parseInt(b[y - 1][x - 1], 35), false);
+    for (let y = 0; y < b.length; y++) {
+        for (let x = 0; x < b[0].length; x++) {
+            if (b[y][x] !== '.') {
+                update(x, y, parseInt(b[y][x], 35), false);
             }
         }
     }
