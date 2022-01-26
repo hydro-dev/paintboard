@@ -40,7 +40,7 @@ registerResolver('Paintboard', 'paint(x: Int!, y: Int!, color: Int!)', 'String',
 });
 
 function update(x: number, y: number, color: number) {
-    currentBoard[y] = currentBoard[y].substr(0, x) + dict[color] + currentBoard[y].substr(x);
+    currentBoard[y] = currentBoard[y].substr(0, x) + dict[color] + currentBoard[y].substr(x + 1);
 }
 bus.on('paintboard/paint', (args) => update(args.x, args.y, args.color));
 bus.on('app/started', () => Promise.all([
