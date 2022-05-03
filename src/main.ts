@@ -106,7 +106,7 @@ $.post("/api", { query: '{paintboard{board}}' }, function (resp) {
     }
 });
 function connect() {
-    const ws = new WebSocket(location.protocol.replace('http', 'ws') + '//' + location.host + '/paintboard/conn/websocket');
+    const ws = new WebSocket(location.protocol.replace('http', 'ws') + '//' + location.host + '/paintboard/conn');
     ws.onmessage = function (event) {
         const data = JSON.parse(event.data);
         if (typeof data.x === 'undefined') return;
