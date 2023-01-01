@@ -1,10 +1,5 @@
 import { registerResolver } from 'hydrooj/src/handler/api';
-import db from 'hydrooj/src/service/db';
-import * as bus from 'hydrooj/src/service/bus';
-import { Connection, ConnectionHandler, Handler, Route } from 'hydrooj/src/service/server';
-import { PRIV } from 'hydrooj/src/model/builtin';
-import { Time } from 'hydrooj/src/utils';
-import { Logger } from 'hydrooj/src/logger';
+import { PRIV, ConnectionHandler, Handler, Time, Logger, db, Context } from 'hydrooj';
 
 interface PaintboardColl {
     x: number;
@@ -16,12 +11,15 @@ interface PaintboardColl {
 
 const logger = new Logger('paintboard');
 const dict = '0123456789abcdefghijklmnopqrstuvwxyz';
-const currentBoard = [];
+const currentBoard: string[] = [];
 for (let i = 1; i <= 600; i++) currentBoard.push('.'.repeat(1000));
 
-declare module 'hydrooj/src/interface' {
+declare module 'hydrooj' {
     interface Collections {
         paintboard: PaintboardColl;
+    }
+    interface EventMap {
+        'paintboard/paint': (args: { x: number, y: number, color: number }) => void;
     }
 }
 const coll = db.collection('paintboard');
@@ -40,31 +38,18 @@ registerResolver('Paintboard', 'paint(x: Int!, y: Int!, color: Int!)', 'String',
 });
 
 function update(x: number, y: number, color: number) {
-    currentBoard[y] = currentBoard[y].substr(0, x) + dict[color] + currentBoard[y].substr(x + 1);
+    currentBoard[y] = currentBoard[y].substring(0, x) + dict[color] + currentBoard[y].substring(x + 1);
 }
-bus.on('paintboard/paint', (args) => update(args.x, args.y, args.color));
-bus.on('app/started', () => Promise.all([
-    db.ensureIndexes(
-        coll,
-        { key: { x: 1, y: 1 }, name: 'pos' },
-        { key: { uid: 1 }, name: 'user' },
-    ),
-    (async () => {
-        const res = await coll.find({ effective: true }).toArray();
-        for (const { x, y, color } of res) update(x, y, color);
-        logger.success('Loaded board with %d pixels', res.length);
-    })(),
-]));
 
 class ConnHandler extends ConnectionHandler {
-    listener: () => boolean;
+    dispose: () => boolean;
 
     prepare() {
-        this.listener = bus.on('paintboard/paint', (args) => this.send(args));
+        this.dispose = this.ctx.on('paintboard/paint', (args) => this.send(args));
     }
 
     cleanup() {
-        bus.off('paintboard/paint', this.listener);
+        this.dispose?.();
     }
 }
 
@@ -74,7 +59,16 @@ class PaintboardHandler extends Handler {
     }
 }
 
-global.Hydro.handler.paintboard = () => {
-    Connection('paintboard_conn', '/paintboard/conn', ConnHandler);
-    Route('paintboard', '/paintboard', PaintboardHandler);
+export async function apply(ctx: Context) {
+    ctx.on('paintboard/paint', (args) => update(args.x, args.y, args.color));
+    await db.ensureIndexes(
+        coll,
+        { key: { x: 1, y: 1 }, name: 'pos' },
+        { key: { uid: 1 }, name: 'user' },
+    );
+    const res = await coll.find({ effective: true }).toArray();
+    for (const { x, y, color } of res) update(x, y, color);
+    logger.success('Loaded board with %d pixels', res.length);
+    ctx.Connection('paintboard_conn', '/paintboard/conn', ConnHandler);
+    ctx.Route('paintboard', '/paintboard', PaintboardHandler);
 }
