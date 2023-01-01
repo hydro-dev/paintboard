@@ -34,6 +34,7 @@ registerResolver('Paintboard', 'paint(x: Int!, y: Int!, color: Int!)', 'String',
     if (await coll.findOne({ _id: timeFilter, uid: ctx.user._id })) return '冷却时间未到';
     await coll.updateMany({ x: args.x, y: args.y }, { $set: { effective: false } });
     await coll.insertOne({ ...args, effective: true, uid: ctx.user._id });
+    logger.debug('User %s painted (%d, %d) with color %d', ctx.user.username, args.x, args.y, args.color);
     bus.broadcast('paintboard/paint', args);
 });
 
