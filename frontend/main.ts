@@ -64,11 +64,11 @@ $('#mycanvas').bind('mousewheel', (event) => {
   const y = Math.floor(event.offsetY! / scale);
   const x = Math.floor(event.offsetX! / scale);
   if (delta > 0) {
-    if (scale == 10) zoom(5);
-    else if (scale == 5) zoom(1);
-  } else if (scale == 1) zoom(5);
-  else if (scale == 5) zoom(10);
-  if (scale != 1) {
+    if (scale === 10) zoom(5);
+    else if (scale === 5) zoom(1);
+  } else if (scale === 1) zoom(5);
+  else if (scale === 5) zoom(10);
+  if (scale !== 1) {
     $('#mycanvas').css('top', -y * scale + 300);
     $('#mycanvas').css('left', -x * scale + 500);
   }
