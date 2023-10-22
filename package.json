@@ -9,12 +9,12 @@
   "dependencies": {
     "@eirslett/jquery-ui-esm": "^1.12.1-alpha",
     "amazeui": "^2.7.2",
-    "jquery": "^3.6.4"
+    "jquery": "^3.7.1"
   },
   "devDependencies": {
-    "@types/jquery": "^3.5.16",
+    "@types/jquery": "^3.5.22",
     "hydrooj": "^4.5.1",
-    "typescript": "^5.0.4",
-    "vite": "^4.2.1"
+    "typescript": "^5.2.2",
+    "vite": "^4.4.11"
   }
 }

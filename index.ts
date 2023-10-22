@@ -38,6 +38,7 @@ registerResolver('Paintboard', 'paint(x: Int!, y: Int!, color: Int!)', 'String',
     await coll.insertOne({ ...args, effective: true, uid: ctx.user._id });
     logger.debug('User %s painted (%d, %d) with color %d', ctx.user.username, args.x, args.y, args.color);
     bus.broadcast('paintboard/paint', args);
+    return '';
 });
 
 function update(x: number, y: number, color: number) {
