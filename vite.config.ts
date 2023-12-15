@@ -8,6 +8,7 @@ const target: ProxyOptions = {
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    root: 'frontend',
     server: {
         proxy: {
             '/paintboard/conn/websocket': target,
