@@ -108,7 +108,7 @@ $('#mycanvas').bind('click', (event) => {
   }
 });
 $('#login').on('click', () => {
-  window.location.href = '/login?redirect=%252Fpaintboard';
+  window.location.href = '/login?redirect=%2Fpaintboard';
 });
 $.post('/api', { query: '{paintboard{board}}' }, (resp) => {
   const b = resp.data.paintboard.board;

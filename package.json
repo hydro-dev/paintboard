@@ -1,6 +1,7 @@
 {
   "name": "@hydrooj/paintboard",
   "version": "0.0.0",
+  "main": "index.ts",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build && mv public/index.html templates/paintboard.html",
@@ -12,9 +13,9 @@
     "jquery": "^3.7.1"
   },
   "devDependencies": {
-    "@types/jquery": "^3.5.22",
+    "@types/jquery": "^3.5.29",
     "hydrooj": "^4.5.1",
-    "typescript": "^5.2.2",
-    "vite": "^4.4.11"
+    "typescript": "^5.3.3",
+    "vite": "^5.0.8"
   }
 }
