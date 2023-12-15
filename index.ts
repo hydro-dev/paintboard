@@ -1,7 +1,6 @@
 import {
-    ConnectionHandler, Context, db, Handler, Logger, PRIV, subscribe, Time,
+    ConnectionHandler, Context, db, Handler, Logger, PRIV, registerResolver, subscribe, Time,
 } from 'hydrooj';
-import { registerResolver } from 'hydrooj/src/handler/api';
 
 interface PaintboardColl {
     x: number;
@@ -45,8 +44,14 @@ function update(x: number, y: number, color: number) {
     currentBoard[y] = currentBoard[y].substring(0, x) + dict[color] + currentBoard[y].substring(x + 1);
 }
 
-@subscribe('paintboard/paint')
-class ConnHandler extends ConnectionHandler { }
+class ConnHandler extends ConnectionHandler {
+    category = '#paintboard';
+
+    @subscribe('paintboard/paint')
+    async onPaint(args) {
+        this.send(args);
+    }
+}
 
 class PaintboardHandler extends Handler {
     get() {
